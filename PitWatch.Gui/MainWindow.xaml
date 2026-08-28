@@ -1,0 +1,459 @@
+<Window x:Class="PitWatch.Gui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PitWatch" Height="860" Width="1320"
+        Background="{StaticResource BgDark}"
+        Icon="Assets/PitWatch.ico"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="72"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="200"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header / brand identity -->
+        <Border x:Name="UpdateBanner" Grid.Row="0" CornerRadius="6" Margin="4,4,4,0" Padding="14,10"
+                Background="{DynamicResource AccentGreen}" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="UpdateBannerText" Grid.Column="0" Text="" Foreground="Black"
+                           FontFamily="Segoe UI" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <Button x:Name="UpdateInfoButton" Grid.Column="1" Content="What's new?" Padding="10,4"
+                        Margin="12,0,0,0" HorizontalAlignment="Left" Background="Transparent"
+                        Foreground="Black" BorderThickness="0" Cursor="Hand"
+                        FontFamily="Segoe UI" FontSize="12" Click="UpdateInfo_Click"/>
+                <Button x:Name="UpdateRestartButton" Grid.Column="2" Content="Restart &amp; update" Padding="14,6"
+                        Margin="0,0,8,0" Background="#1A1A1A" Foreground="White" BorderThickness="0"
+                        Click="UpdateRestart_Click"/>
+                <Button Grid.Column="3" Content="Later" Padding="14,6" Background="Transparent"
+                        Foreground="Black" BorderThickness="0" Click="UpdateDismiss_Click"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1" CornerRadius="6" Margin="4" Padding="14,8">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#1B2230" Offset="0"/>
+                    <GradientStop Color="#121722" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0" Source="Assets/Logo.png" Height="42" Margin="0,0,14,0"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                <!-- Live status pills -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
+                    <Ellipse x:Name="ConnectionDot" Width="8" Height="8" Fill="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ConnectionText" Text="Waiting for ACC or LMU..." Margin="7,0,0,0"
+                               Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center" FontFamily="Segoe UI" FontSize="12"/>
+                </StackPanel>
+
+                <Border Grid.Column="3" Background="{DynamicResource ControlBg}" CornerRadius="4" Padding="10,5" Margin="0,0,8,0">
+                    <TextBlock x:Name="SessionText" Text="--" FontWeight="SemiBold" FontFamily="Segoe UI" FontSize="12"/>
+                </Border>
+
+                <Border Grid.Column="4" Background="{DynamicResource ControlBg}" CornerRadius="4" Padding="12,5" Margin="0,0,16,0">
+                    <TextBlock x:Name="PositionHeaderText" Text="--" FontSize="15" FontWeight="Bold"
+                               Foreground="{DynamicResource AccentGreen}"/>
+                </Border>
+
+                <Button Grid.Column="5" Content="Pop out map" Style="{StaticResource GhostButton}" Padding="12,7" Margin="0,0,6,0" Click="PopoutMapButton_Click"/>
+                <Button Grid.Column="6" Content="History" Style="{StaticResource GhostButton}" Padding="12,7" Margin="0,0,6,0" Click="HistoryButton_Click"/>
+                <Button Grid.Column="7" Content="Settings" Style="{StaticResource GhostButton}" Padding="12,7" Click="SettingsButton_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- Main content, categorized into tabs -->
+        <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0" Margin="0,4,0,0">
+
+            <TabItem Header="Overview">
+                <Grid Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="230"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="260"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border x:Name="LimitedGamePanel" Grid.Row="0" Grid.ColumnSpan="3" Visibility="Collapsed"
+                            Background="{DynamicResource ControlBg}" CornerRadius="5" Padding="12,8" Margin="4,0,4,6">
+                        <TextBlock x:Name="LimitedGameNote" Text="" TextWrapping="Wrap" FontSize="12"
+                                   Foreground="{DynamicResource TextMuted}" FontFamily="Segoe UI"/>
+                    </Border>
+
+                    <!-- Left: live stats -->
+                    <StackPanel Grid.Row="1" Grid.Column="0">
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="SPEED" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="SpeedText" Text="0" Style="{StaticResource BigStat}"/>
+                                <TextBlock x:Name="GearText" Text="Gear: N" Foreground="{StaticResource TextMuted}"/>
+                                <ProgressBar x:Name="RpmBar" Height="6" Margin="0,6,0,0" Minimum="0" Maximum="9000"
+                                             Foreground="{StaticResource AccentGreen}" Background="{StaticResource ControlBg}" BorderThickness="0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="FUEL" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="FuelText" Text="-- L" Style="{StaticResource BigStat}" FontSize="20"/>
+                                <TextBlock x:Name="FuelLapsText" Text="-- laps left" Foreground="{StaticResource TextMuted}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border x:Name="TyrePanel" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="TYRES (temp / psi)" Style="{StaticResource PanelLabel}"/>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" x:Name="TyreFLText" Text="FL --/--"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TyreFRText" Text="FR --/--"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" x:Name="TyreRLText" Text="RL --/--" Margin="0,4,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="TyreRRText" Text="RR --/--" Margin="0,4,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="LAP TIMES" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="CurrentLapTimeText" Text="Current: --:--" Margin="0,4,0,0"/>
+                                <TextBlock x:Name="LastLapTimeText" Text="Last: --:--" Margin="0,4,0,0"/>
+                                <TextBlock x:Name="BestLapTimeText" Text="Best: --:--" Margin="0,4,0,0" Foreground="{StaticResource AccentGreen}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border x:Name="DamagePanel" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="DAMAGE" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="DamageText" Text="No damage" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border x:Name="TimeLeftPanel" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="TIME REMAINING" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="TimeLeftText" Text="-- : --" Style="{StaticResource BigStat}" FontSize="20" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Center: graphs -->
+                    <Grid Grid.Row="1" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border x:Name="SpeedTracePanel" Grid.Row="0" Style="{StaticResource Panel}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="SPEED - LAST 15s" Style="{StaticResource PanelLabel}"/>
+                                <Canvas Grid.Row="1" x:Name="SpeedTraceCanvas" Background="#0E1219" Margin="0,6,0,0" ClipToBounds="True"/>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="PedalTracePanel" Grid.Row="1" Style="{StaticResource Panel}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{StaticResource PanelLabel}">
+                                    <Run Text="THROTTLE"/>
+                                    <Run Text=" / " Foreground="{StaticResource TextMuted}"/>
+                                    <Run Text="BRAKE"/>
+                                    <Run Text=" / " Foreground="{StaticResource TextMuted}"/>
+                                    <Run Text="STEERING"/>
+                                </TextBlock>
+                                <Canvas Grid.Row="1" x:Name="PedalTraceCanvas" Background="#0E1219" Margin="0,6,0,0" ClipToBounds="True"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- Right: g-force + mini map preview -->
+                    <StackPanel Grid.Row="1" Grid.Column="2">
+                        <Border x:Name="GForcePanel" Style="{StaticResource Panel}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="180"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="G-FORCE" Style="{StaticResource PanelLabel}"/>
+                                <Canvas Grid.Row="1" x:Name="GForceCanvas" Background="#0E1219" Margin="0,6,0,0"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="DELTA TO BEST LAP" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="GhostDeltaText" Text="--" FontSize="34" FontWeight="Bold"
+                                           HorizontalAlignment="Center" Margin="0,4,0,4"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="QUICK STRATEGY" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="QuickStrategyText" Text="Drive a bit to build up data..."
+                                           Margin="0,6,0,0" TextWrapping="Wrap" FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="TrackMapTab" Header="Track Map">
+                <Border Style="{StaticResource Panel}" Margin="0,8,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="TRACK MAP - everyone on track" Style="{StaticResource PanelLabel}"/>
+                        <Grid Grid.Row="1" Margin="0,8,0,0">
+                            <Canvas x:Name="TrackMapCanvas" Background="#0E1219"/>
+                            <TextBlock x:Name="TrackMapStatusText" Text="" Foreground="{StaticResource TextMuted}"
+                                       TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       TextAlignment="Center" Margin="12" FontSize="13"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <TabItem x:Name="DiagnosticsTab" Header="Diagnostics" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,8,0,0">
+                    <StackPanel>
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="LIVE STATE" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="DiagStateText" Margin="0,8,0,0" FontFamily="Consolas"
+                                           FontSize="12" TextWrapping="Wrap" Text="--"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="CONNECTIONS" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="DiagConnText" Margin="0,8,0,0" FontFamily="Consolas"
+                                           FontSize="12" TextWrapping="Wrap" Text="--"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="TOOLS" Style="{StaticResource PanelLabel}"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button Content="Open log file" Style="{StaticResource GhostButton}" Padding="14,8" Margin="0,0,8,0" Click="DiagOpenLog_Click"/>
+                                    <Button Content="Open data folder" Style="{StaticResource GhostButton}" Padding="14,8" Click="DiagOpenFolder_Click"/>
+                                </StackPanel>
+                                <TextBlock Margin="0,12,0,0" FontSize="11" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextMuted}"
+                                           Text="Debug commands you can type in the radio box: debug broadcast, debug damage, debug tyres, debug flag."/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Strategy">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,8,0,0">
+                    <Grid MaxWidth="1000" HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="RACE RULES" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock Margin="0,4,0,10" TextWrapping="Wrap" FontSize="11"
+                                           Foreground="{DynamicResource TextMuted}"
+                                           Text="These aren't in the game's data, so PitWatch can only use them if you enter them. You can also just say them mid-race."/>
+
+                                <WrapPanel>
+                                    <StackPanel Margin="0,0,24,10">
+                                        <TextBlock Text="RACE LENGTH" Style="{StaticResource PanelLabel}"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                            <TextBox x:Name="RuleLengthBox" Width="70" Text=""/>
+                                            <ComboBox x:Name="RuleLengthUnit" Width="90" Margin="6,0,0,0">
+                                                <ComboBoxItem Content="minutes" IsSelected="True"/>
+                                                <ComboBoxItem Content="laps"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,0,24,10">
+                                        <TextBlock Text="PIT WINDOW (LAPS)" Style="{StaticResource PanelLabel}"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                            <TextBox x:Name="RuleWindowFrom" Width="60" Text=""/>
+                                            <TextBlock Text="to" VerticalAlignment="Center" Margin="6,0,6,0"
+                                                       Foreground="{DynamicResource TextMuted}"/>
+                                            <TextBox x:Name="RuleWindowTo" Width="60" Text=""/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,0,24,10">
+                                        <TextBlock Text="STOP TAKES (SEC)" Style="{StaticResource PanelLabel}"/>
+                                        <TextBox x:Name="RuleStopSeconds" Width="70" Text="" Margin="0,6,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,0,24,10">
+                                        <TextBlock Text="TANK (LITRES)" Style="{StaticResource PanelLabel}"/>
+                                        <TextBox x:Name="RuleTankCapacity" Width="70" Text="" Margin="0,6,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,0,0,10">
+                                        <TextBlock Text="REQUIRED" Style="{StaticResource PanelLabel}"/>
+                                        <CheckBox x:Name="RuleMandatoryStop" Content="Pit stop" Margin="0,6,0,0"/>
+                                        <CheckBox x:Name="RuleMandatoryTyres" Content="Tyre change" Margin="0,4,0,0"/>
+                                        <CheckBox x:Name="RuleMandatoryRefuel" Content="Refuelling" Margin="0,4,0,0"/>
+                                        <CheckBox x:Name="RuleMandatoryDriver" Content="Driver change" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </WrapPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <Button Content="Apply" Style="{StaticResource PrimaryButton}" Padding="20,8" Click="ApplyRules_Click"/>
+                                    <Button Content="Clear" Style="{StaticResource GhostButton}" Padding="18,8" Margin="8,0,0,0" Click="ClearRules_Click"/>
+                                    <TextBlock x:Name="StrategyRulesText" VerticalAlignment="Center" Margin="14,0,0,0"
+                                               TextWrapping="Wrap" FontSize="12" Text="No race rules set."/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="FUEL TO FINISH" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="StrategyFuelText" Text="Building fuel data..." Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="PIT WINDOW" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="StrategyPitText" Text="Building data..." Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border x:Name="PacePanel" Grid.Row="2" Grid.Column="0" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="PACE" Style="{StaticResource PanelLabel}"/>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Best lap" Foreground="{DynamicResource TextMuted}" FontSize="11"/>
+                                        <TextBlock x:Name="PaceBestText" Text="--:--" FontSize="20" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Theoretical best" Foreground="{DynamicResource TextMuted}" FontSize="11"/>
+                                        <TextBlock x:Name="PaceTheoreticalText" Text="--:--" FontSize="20" FontWeight="Bold"
+                                                   Foreground="{DynamicResource AccentGreen}"/>
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock x:Name="PaceOnTableText" Text="" Foreground="{DynamicResource TextMuted}" Margin="0,6,0,0" FontSize="12"/>
+                                <TextBlock x:Name="PaceSectorsText" Text="" Margin="0,8,0,0" FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="RACE PLAN" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="RacePlanSummary" Margin="0,8,0,0" TextWrapping="Wrap"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Text="Set the race length above, then run a few laps."/>
+                                <TextBlock x:Name="RacePlanDetails" Margin="0,8,0,0" TextWrapping="Wrap"
+                                           FontSize="12" Foreground="{DynamicResource TextMuted}" Text=""/>
+                                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" FontSize="11"
+                                           Foreground="{DynamicResource TextMuted}"
+                                           Text="Works in practice - run a few laps at race pace and PitWatch measures your fuel use, then plans the race from it."/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border x:Name="StrategyLapPanel" Grid.Row="2" Grid.Column="1" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="LAST LAP ANALYSIS" Style="{StaticResource PanelLabel}"/>
+                                <TextBlock x:Name="StrategyLapText" Text="Complete a couple of clean laps first." Margin="0,6,0,0" TextWrapping="Wrap"/>
+                                <TextBlock Text="TYRES" Style="{StaticResource PanelLabel}" Margin="0,16,0,0"/>
+                                <TextBlock x:Name="TyreAdviceText" Text="--" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="STINTS" Style="{StaticResource PanelLabel}"/>
+                                <ListBox x:Name="StintList" Margin="0,6,0,0" MaxHeight="180" FontFamily="Consolas" FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- Bottom: radio transcript + input, always visible regardless of tab -->
+        <Border Grid.Row="3" Style="{StaticResource Panel}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="ENGINEER RADIO" Style="{StaticResource PanelLabel}"/>
+                <ListBox Grid.Row="1" x:Name="TranscriptList" Background="Transparent" BorderThickness="0"
+                         Foreground="{StaticResource TextPrimary}" FontFamily="Consolas" FontSize="12" Margin="0,4,0,4"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" x:Name="QuestionInput" Padding="6" FontFamily="Consolas"
+                             KeyDown="QuestionInput_KeyDown"/>
+                    <Button Grid.Column="1" Content="Ask" Padding="14,6" Margin="6,0,0,0"
+                            Background="{StaticResource AccentGreen}" Foreground="Black" FontWeight="Bold"
+                            BorderThickness="0" Click="AskButton_Click"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

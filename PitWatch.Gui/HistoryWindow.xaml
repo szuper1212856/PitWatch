@@ -1,0 +1,171 @@
+<Window x:Class="PitWatch.Gui.HistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PitWatch - Session History" Height="800" Width="1350" MinHeight="560" MinWidth="1000"
+        WindowState="Maximized"
+        Background="{DynamicResource BgDark}"
+        Icon="Assets/PitWatch.ico"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Session list + comparison picker -->
+        <Border Grid.Column="0" Style="{StaticResource Panel}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                    <TextBlock Text="SESSIONS" Style="{StaticResource PanelLabel}" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="GameFilterCombo" SelectionChanged="GameFilter_Changed"/>
+                </StackPanel>
+                <ListBox Grid.Row="1" x:Name="SessionListBox" SelectionChanged="SessionListBox_SelectionChanged" FontSize="12"/>
+
+                <TextBlock Grid.Row="2" Text="COMPARE WITH" Style="{StaticResource PanelLabel}" Margin="0,14,0,6"/>
+                <ComboBox Grid.Row="3" x:Name="CompareCombo" SelectionChanged="CompareCombo_SelectionChanged"
+                          Background="{DynamicResource ControlBg}" Foreground="{DynamicResource TextPrimary}"/>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Headline stats -->
+            <Border Grid.Row="0" Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock x:Name="TrackHeaderText" FontSize="18" FontWeight="Bold" Margin="0,0,0,2"
+                               Foreground="{DynamicResource AccentGreen}" Text=""/>
+                    <TextBlock x:Name="SummaryText" Text="Select a session on the left." FontSize="14"/>
+                    <TextBlock x:Name="ProgressText" Text="" Margin="0,8,0,0" TextWrapping="Wrap" FontSize="13"/>
+                    <TextBlock x:Name="DirectorText" Text="" Margin="0,8,0,0" TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextMuted}" FontSize="12"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Stat tiles -->
+            <UniformGrid Grid.Row="1" Rows="1" Columns="5">
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="BEST LAP" Style="{StaticResource PanelLabel}"/>
+                        <TextBlock x:Name="StatBestLap" Text="--" FontSize="19" FontWeight="Bold" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="THEORETICAL" Style="{StaticResource PanelLabel}"/>
+                        <TextBlock x:Name="StatTheoretical" Text="--" FontSize="19" FontWeight="Bold" Margin="0,4,0,0"
+                                   Foreground="{DynamicResource AccentGreen}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="AVERAGE" Style="{StaticResource PanelLabel}"/>
+                        <TextBlock x:Name="StatAverage" Text="--" FontSize="19" FontWeight="Bold" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="CONSISTENCY" Style="{StaticResource PanelLabel}"/>
+                        <TextBlock x:Name="StatConsistency" Text="--" FontSize="19" FontWeight="Bold" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Panel}">
+                    <StackPanel>
+                        <TextBlock Text="LAPS" Style="{StaticResource PanelLabel}"/>
+                        <TextBlock x:Name="StatLaps" Text="--" FontSize="19" FontWeight="Bold" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Lap time chart with comparison overlay -->
+            <Border Grid.Row="2" Style="{StaticResource Panel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock Text="LAP TIMES" Style="{StaticResource PanelLabel}"/>
+                        <Ellipse Width="8" Height="8" Fill="{DynamicResource AccentGreen}" VerticalAlignment="Center" Margin="16,0,0,0"/>
+                        <TextBlock x:Name="LegendPrimary" Text="This session" FontSize="11" Margin="5,0,0,0" Foreground="{DynamicResource TextMuted}"/>
+                        <Ellipse Width="8" Height="8" Fill="{DynamicResource AccentPurple}" VerticalAlignment="Center" Margin="14,0,0,0"/>
+                        <TextBlock x:Name="LegendCompare" Text="Comparison" FontSize="11" Margin="5,0,0,0" Foreground="{DynamicResource TextMuted}"/>
+                    </StackPanel>
+                    <Canvas Grid.Row="1" x:Name="LapChartCanvas" Background="#0E1219" Margin="0,8,0,0"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource Panel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="SPEED OVER SESSION" Style="{StaticResource PanelLabel}"/>
+                        <Canvas Grid.Row="1" x:Name="SpeedCanvas" Background="#0E1219" Margin="0,8,0,0"/>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource Panel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="EVERY LAP" Style="{StaticResource PanelLabel}"/>
+                        <Grid Grid.Row="1" Margin="0,8,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="44"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="46"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="LAP" Style="{StaticResource PanelLabel}"/>
+                            <TextBlock Grid.Column="1" Text="TIME" Style="{StaticResource PanelLabel}"/>
+                            <TextBlock Grid.Column="2" Text="DELTA" Style="{StaticResource PanelLabel}"/>
+                            <TextBlock Grid.Column="3" Text="POS" Style="{StaticResource PanelLabel}"/>
+                        </Grid>
+                        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="LapTable"/>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource Panel}" Width="300">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="TRACK MAP" Style="{StaticResource PanelLabel}"/>
+                        <Grid Grid.Row="1" Margin="0,8,0,0">
+                            <Canvas x:Name="MapCanvas" Background="#0E1219"/>
+                            <TextBlock x:Name="MapStatusText" Text="" Foreground="{DynamicResource TextMuted}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
+                                       TextAlignment="Center" FontSize="11" Margin="10"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
