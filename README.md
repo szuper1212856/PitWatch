@@ -72,17 +72,6 @@ amount of code can produce them, and PitWatch will tell you so rather than guess
 - **Corner names** - coaching says "you're slow around 40% through the lap" rather than
   naming the corner, because no corner map is provided to the app.
 
-## Building from source
-
-Requires the .NET 8 SDK or newer, on Windows.
-
-```
-dotnet build PitWatch.sln -c Release
-dotnet run --project PitWatch.Gui -c Release
-```
-
-To produce an installable, self-updating release, run `build-release.bat 1.0.0`. See
-[RELEASING.md](RELEASING.md) for the full process.
 
 ## Something went wrong?
 
