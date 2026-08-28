@@ -1,0 +1,12 @@
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\bin\Release\net8.0-windows\PitWatch.Core.deps.json
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\bin\Release\net8.0-windows\PitWatch.Core.dll
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\bin\Release\net8.0-windows\PitWatch.Core.pdb
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\PitWatch.Core.csproj.AssemblyReference.cache
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\PitWatch.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\PitWatch.Core.AssemblyInfoInputs.cache
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\PitWatch.Core.AssemblyInfo.cs
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\PitWatch.Core.csproj.CoreCompileInputs.cache
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\PitWatch.Core.dll
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\refint\PitWatch.Core.dll
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\PitWatch.Core.pdb
+C:\Users\BazsiBácsi\Downloads\PitWatchSolution_33\PitWatchSolution\PitWatch.Core\obj\Release\net8.0-windows\ref\PitWatch.Core.dll

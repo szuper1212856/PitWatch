@@ -1,0 +1,10 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Same keys as AccentsNormal.xaml so no code needs to change - just different
+         actual colors, chosen from the Okabe-Ito colorblind-safe palette so red/green
+         (the most common confusion) aren't relied on to tell things apart. -->
+    <SolidColorBrush x:Key="AccentGreen" Color="#009E73"/>
+    <SolidColorBrush x:Key="AccentBlue" Color="#0072B2"/>
+    <SolidColorBrush x:Key="AccentRed" Color="#D55E00"/>
+    <SolidColorBrush x:Key="AccentPurple" Color="#CC79A7"/>
+</ResourceDictionary>

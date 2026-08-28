@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "C7+fbjkcFuY=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\BazsiBácsi\\Downloads\\PitWatchSolution_33\\PitWatchSolution\\PitWatch.Console\\PitWatch.Console.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\BazsiBácsi\\.nuget\\packages\\system.security.cryptography.protecteddata\\8.0.0\\system.security.cryptography.protecteddata.8.0.0.nupkg.sha512",
+    "C:\\Users\\BazsiBácsi\\.nuget\\packages\\system.speech\\8.0.0\\system.speech.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,136 @@
+<Window x:Class="PitWatch.DevLauncher.LauncherWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PitWatch Dev Launcher" Height="820" Width="940" MinHeight="640" MinWidth="820"
+        Icon="Assets/PitWatch.ico"
+        Background="{StaticResource Bg}"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Padding="20,14">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#1B2230" Offset="0"/>
+                    <GradientStop Color="#10141C" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0" Source="Assets/Logo.png" Height="52" Margin="0,0,16,0"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="DEV LAUNCHER" FontFamily="Segoe UI" FontSize="17" FontWeight="Bold"
+                               Foreground="{StaticResource Accent}"/>
+                    <TextBlock Text="Not included in released builds" FontFamily="Segoe UI" FontSize="11"
+                               Foreground="{StaticResource Muted}" Margin="0,1,0,0"/>
+                </StackPanel>
+
+                <Border Grid.Column="2" Background="{StaticResource Control}" CornerRadius="14" Padding="14,7"
+                        VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse x:Name="StatusDot" Width="9" Height="9" Fill="{StaticResource Muted}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StatusText" Text="Ready" Margin="8,0,0,0" FontFamily="Segoe UI"
+                                   FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource Muted}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Rectangle Grid.Row="0" Height="2" VerticalAlignment="Bottom" Fill="{StaticResource Accent}" Opacity="0.35"/>
+
+        <!-- Body -->
+        <Grid Grid.Row="1" Margin="16,14,16,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="330"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Build info -->
+            <Border Grid.Row="0" Grid.Column="0" Background="{StaticResource Panel}" CornerRadius="8"
+                    Padding="16" Margin="0,0,7,10">
+                <StackPanel>
+                    <TextBlock Text="BUILD" Style="{StaticResource SectionLabel}"/>
+                    <StackPanel x:Name="BuildInfoStack"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Launch options -->
+            <Border Grid.Row="0" Grid.Column="1" Background="{StaticResource Panel}" CornerRadius="8"
+                    Padding="16" Margin="7,0,0,10">
+                <StackPanel>
+                    <TextBlock Text="LAUNCH OPTIONS" Style="{StaticResource SectionLabel}"/>
+                    <CheckBox x:Name="DevModeCheck" Content="Force developer mode on"/>
+                    <TextBlock Text="Shows the Diagnostics tab inside PitWatch" Style="{StaticResource Hint}"/>
+
+                    <CheckBox x:Name="FreshConfigCheck" Content="Start fresh" Margin="0,10,0,0"/>
+                    <TextBlock Text="Moves your config aside (keeps a timestamped backup) so the setup wizard runs again" Style="{StaticResource Hint}"/>
+
+                    <CheckBox x:Name="ClearLogCheck" Content="Clear the log before launching" IsChecked="True" Margin="0,10,0,0"/>
+
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" x:Name="LaunchButton" Content="BUILD &amp; LAUNCH"
+                                Style="{StaticResource LaunchButton}" Padding="0,13" Click="Launch_Click"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
+                            <Button x:Name="BuildButton" Content="Build only" Style="{StaticResource DevButton}" Margin="0,0,6,0" Click="Build_Click"/>
+                            <Button Content="Data" Style="{StaticResource DevButton}" Margin="0,0,6,0" Click="OpenData_Click"/>
+                            <Button Content="Config" Style="{StaticResource DevButton}" Margin="0,0,6,0" Click="OpenConfig_Click"/>
+                            <Button Content="Refresh" Style="{StaticResource DevButton}" Click="Refresh_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Console -->
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource Panel}" CornerRadius="8" Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <TextBlock Text="LOG CONSOLE" Style="{StaticResource SectionLabel}" Margin="0" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <CheckBox x:Name="AutoScrollCheck" Content="Follow" IsChecked="True" Margin="0,0,14,0"/>
+                            <CheckBox x:Name="ErrorsOnlyCheck" Content="Problems only" Margin="0,0,14,0"
+                                      Checked="FilterChanged" Unchecked="FilterChanged"/>
+                            <Button Content="Clear" Style="{StaticResource DevButton}" Padding="12,5" Click="ClearLog_Click"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="1" Background="#0A0D13" CornerRadius="5" Padding="12">
+                        <ScrollViewer x:Name="ConsoleScroll" VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="ConsoleList"/>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Padding="20,10">
+            <TextBlock x:Name="FooterText" Text="" Foreground="{StaticResource Muted}"
+                       FontFamily="Consolas" FontSize="11" TextTrimming="CharacterEllipsis"/>
+        </Border>
+    </Grid>
+</Window>
