@@ -1,0 +1,11 @@
+bin/
+obj/
+*.user
+*.suo
+.vs/
+config.json
+pitwatch.log
+pitwatch.log.old
+callouts.json
+Sessions/
+debug_broadcast*.txt
