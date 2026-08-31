@@ -77,6 +77,11 @@ public class AccTelemetryReader : ITelemetryProvider
         public int lastSectorTime;
         public int numberOfLaps;
         public fixed char tyreCompound[33];
+        // Missing this field shifted everything below it by 4 bytes: activeCars was
+        // reading normalizedCarPosition, so "of 24 cars" showed up as numbers like
+        // 1044357427 (that value read as a float is ~0.18 - a lap position, not a car
+        // count). Lap progress was reading this replay field for the same reason.
+        public float replayTimeMultiplier;
         public float normalizedCarPosition;
         public int activeCars;
         // These two large arrays exist in the real struct purely as padding to reach
@@ -176,7 +181,10 @@ public class AccTelemetryReader : ITelemetryProvider
             state.CurrentLap = graphics.completedLaps + 1;
             state.TotalLaps = graphics.numberOfLaps;
             state.Position = graphics.position;
-            state.TotalCars = graphics.activeCars;
+            // Sanity-check rather than trusting the field blindly. ACC grids top out well
+            // below this, so anything larger means we're reading the wrong bytes - better
+            // to report nothing than to tell the driver they're "P1 of 1044357427".
+            state.TotalCars = graphics.activeCars is > 0 and <= 100 ? graphics.activeCars : 0;
             state.LastLapTimeSeconds = graphics.iLastTime / 1000f;
             state.BestLapTimeSeconds = graphics.iBestTime / 1000f;
             state.CurrentLapTimeSeconds = graphics.iCurrentTime / 1000f;

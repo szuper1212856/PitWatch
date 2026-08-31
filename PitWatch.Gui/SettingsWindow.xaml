@@ -84,6 +84,15 @@
                                     <TextBlock x:Name="GeminiTestResult" VerticalAlignment="Center" Margin="10,0,0,0"
                                                FontSize="12" FontFamily="Segoe UI" TextWrapping="Wrap" MaxWidth="380"/>
                                 </StackPanel>
+                                <TextBlock Text="Model" Style="{StaticResource PanelLabel}" Margin="0,14,0,4"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox x:Name="ModelCombo" IsEditable="True" MinWidth="260"/>
+                                    <Button x:Name="LoadModelsButton" Content="Load available" Style="{StaticResource GhostButton}"
+                                            Padding="12,6" Margin="8,0,0,0" Click="LoadModels_Click"/>
+                                </StackPanel>
+                                <TextBlock x:Name="ModelStatusText" Style="{StaticResource CardHint}" Margin="0,6,0,0"
+                                           Text="Click Load available to fetch the models your key can use. Free-tier daily limits vary a lot per model - some newer ones allow only 20 requests a day, while lighter flash-lite models allow far more. Quotas and overload are both per-model, so switching is usually the fix for either."/>
+
                                 <TextBlock Style="{StaticResource CardHint}" Margin="0,8,0,0"
                                            Text="The free tier has a per-minute and a per-day request cap. If you hit the daily one, questions and voice input stop working until it resets - PitWatch will tell you in the radio log when that happens. Everything else keeps working."/>
                                 <TextBlock x:Name="ErrorText" Foreground="{DynamicResource AccentRed}" Margin="0,6,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>

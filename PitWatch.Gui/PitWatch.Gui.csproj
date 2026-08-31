@@ -12,7 +12,7 @@
          real Main() it can hook before WPF spins up. That means opting out of the
          auto-generated entry point and pointing at our own. -->
     <StartupObject>PitWatch.Gui.App</StartupObject>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <!-- Icon shown on the .exe, taskbar, and window title bar. -->
     <ApplicationIcon>Assets\PitWatch.ico</ApplicationIcon>
   </PropertyGroup>

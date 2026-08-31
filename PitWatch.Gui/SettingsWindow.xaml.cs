@@ -50,6 +50,7 @@ public partial class SettingsWindow : Window
 
         // Voice & keys
         if (!config.GeminiApiKey.Contains("PASTE_YOUR")) ApiKeyBox.Password = config.GeminiApiKey;
+        ModelCombo.Text = config.GeminiModel;
         UseElevenLabsCheckBox.IsChecked = config.UseElevenLabs;
         ElevenLabsPanel.Visibility = config.UseElevenLabs ? Visibility.Visible : Visibility.Collapsed;
         ElevenLabsKeyBox.Password = config.ElevenLabsApiKey;
@@ -237,6 +238,33 @@ public partial class SettingsWindow : Window
         BroadcastingStatusText.Foreground = (Brush)FindResource(config.BroadcastingEnabled ? "AccentGreen" : "TextMuted");
     }
 
+    private async void LoadModels_Click(object sender, RoutedEventArgs e)
+    {
+        LoadModelsButton.IsEnabled = false;
+        ModelStatusText.Text = "Asking Google which models your key can use...";
+
+        var models = await PitWatch.AI.GeminiClient.ListModelsAsync(ApiKeyBox.Password.Trim());
+
+        if (models.Count == 0)
+        {
+            ModelStatusText.Text = "Couldn't fetch the list - check your key is entered and working.";
+            ModelStatusText.Foreground = (Brush)FindResource("AccentRed");
+        }
+        else
+        {
+            string current = ModelCombo.Text;
+            ModelCombo.Items.Clear();
+            foreach (var m in models) ModelCombo.Items.Add(m);
+            ModelCombo.Text = current; // keep what was selected
+
+            ModelStatusText.Text = $"{models.Count} models available. If one is overloaded, try another - "
+                                 + "flash and flash-lite models are the fastest for race use.";
+            ModelStatusText.Foreground = (Brush)FindResource("TextMuted");
+        }
+
+        LoadModelsButton.IsEnabled = true;
+    }
+
     private async void TestGemini_Click(object sender, RoutedEventArgs e)
     {
         TestGeminiButton.IsEnabled = false;
@@ -390,6 +418,7 @@ public partial class SettingsWindow : Window
         var config = PitWatch.Config.Load();
 
         config.GeminiApiKey = key;
+        if (!string.IsNullOrWhiteSpace(ModelCombo.Text)) config.GeminiModel = ModelCombo.Text.Trim();
         config.UseElevenLabs = UseElevenLabsCheckBox.IsChecked == true;
         config.ElevenLabsApiKey = ElevenLabsKeyBox.Password.Trim();
         config.ElevenLabsVoiceId = string.IsNullOrWhiteSpace(ElevenLabsVoiceBox.Text)
